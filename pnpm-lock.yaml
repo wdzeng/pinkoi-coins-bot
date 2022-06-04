@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^17.0.39
+  '@vercel/ncc': ^0.34.0
   axios: ^0.27.2
   commander: ^9.3.0
   isobject: ^4.0.0
@@ -16,12 +17,18 @@ dependencies:
 
 devDependencies:
   '@types/node': 17.0.39
+  '@vercel/ncc': 0.34.0
   typescript: 4.7.3
 
 packages:
 
   /@types/node/17.0.39:
     resolution: {integrity: sha512-JDU3YLlnPK3WDao6/DlXLOgSNpG13ct+CwIO17V8q0/9fWJyeMJJ/VyZ1lv8kDprihvZMydzVwf0tQOqGiY2Nw==}
+    dev: true
+
+  /@vercel/ncc/0.34.0:
+    resolution: {integrity: sha512-G9h5ZLBJ/V57Ou9vz5hI8pda/YQX5HQszCs3AmIus3XzsmRn/0Ptic5otD3xVST8QLKk7AMk7AqpsyQGN7MZ9A==}
+    hasBin: true
     dev: true
 
   /asynckit/0.4.0:
