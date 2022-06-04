@@ -111,14 +111,15 @@ export default class PinkoiBot {
       // 擊瀏覽三個推薦分類 <a href=\"https://www.pinkoi.com/browse?subcategory=501\">燈具/燈飾</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=516\">香氛蠟燭/燭台</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=549\">乾燥花/永生花</a><br>任務進度：3 / 3
 
       const urlRegex = /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/g
-      const urls: string[] = mission.introduction.match(urlRegex)
-      log.debug('Use urls: ' + urls)
-      if (urls.length !== 3) {
+      const urls: string[] | null = mission.introduction.match(urlRegex)
+      log.debug('Url parsed from mission introduction: ' + urls)
+      if (urls?.length !== 3) {
         throw new Error('expected 3 urls')
       }
 
+      const self = this
       async function solve(url: string) {
-        const response = await axios(url, { headers: { cookie: this.cookie } })
+        const response = await axios(url, { headers: { cookie: self.cookie } })
         validatePinkoiResponse(response)
       }
 
@@ -134,9 +135,10 @@ export default class PinkoiBot {
 
     try {
       const urlRegex = /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/g
-      const urls: string[] = mission.introduction.match(urlRegex)
+      const urls: string[] | null = mission.introduction.match(urlRegex)
+      log.debug('Url parsed from mission introduction: ' + urls)
 
-      if (urls.length !== 1) {
+      if (urls?.length !== 1) {
         throw new Error('expected 1 url')
       }
 
