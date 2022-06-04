@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-COPY src /app
+COPY dist /app
 
 WORKDIR /app
 ENTRYPOINT [ "node", "index.js" ]
