@@ -12,14 +12,15 @@ const EXIT_CODE_UNKNOWN_ERROR = 255
 log.setDefaultLevel(process.env['DEBUG'] ? 'debug' : 'info')
 
 program
-  .name('pinkoi-coins-bot')
+  .name('docker run -v /path/to/cookie:/cookie -it hyperbola/pinkoi-coins-bot:v1')
+  .usage('--cookie /cookie [--checkin | --solve-weekly-usage]')
   .description('A bot to checkin to get Pinkoi coins.')
   .requiredOption('-c, --cookie <path>', 'path to cookie')
   .option('-s, --checkin', 'checkin Pinkoi')
   .option('-m, --solve-weekly-mission', 'solve Pinkoi weekly mission')
-  .usage('docker run -it')
+  .helpOption('-h, --help', 'show this message')
   .version('0.0.0', '-v, --version')
-  .exitOverride(() => process.exit(EXIT_CODE_INVALID_ARGUMENT))
+  .exitOverride((e) => process.exit(e.exitCode === 1 ? EXIT_CODE_INVALID_ARGUMENT : e.exitCode))
 
 program.parse(process.argv)
 const args = program.opts()
