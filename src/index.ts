@@ -78,7 +78,7 @@ async function main() {
         process.exit(EXIT_TASK_FAILED)
       }
       else {
-        log.error('Checkin failed: unknown error')
+        log.error('Mission failed: unknown error')
         log.error(e)
         process.exit(EXIT_CODE_UNKNOWN_ERROR)
       }
