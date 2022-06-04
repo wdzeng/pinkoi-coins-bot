@@ -171,9 +171,10 @@ export default class PinkoiBot {
 
   private async solveWeeklyMission3(mission: WeeklyMission): Promise<void> {
     // 點擊商品頁，或此頁底下的「找相似」發現同類、風格型商品
-    // TODO: not sure if this works
+    // First get item_history and visits https://www.pinkoi.com/recommend/product/<first-item>?tab=similiar
+    // TODO: maybe visiting https://www.pinkoi.com/recommend/product/<random>?tab=similiar is OK
 
-    const url = 'https://www.pinkoi.com/recommend/product/qLE8qUei?tab=similia'
+    const url = 'https://www.pinkoi.com/recommend/product/qLE8qUei?tab=similiar'
     const referer = 'https://www.pinkoi.com/event/mission_game'
 
     try {
