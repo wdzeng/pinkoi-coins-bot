@@ -33,7 +33,7 @@ async function main() {
   log.debug('Start to load cookie from: ' + args.cookie)
   let cookie: string
   try {
-    cookie = fs.readFileSync(path.resolve(args.cookie), 'utf-8')
+    cookie = fs.readFileSync(path.resolve(args.cookie), 'utf-8').trim()
   } catch (e: unknown) {
     log.error('Failed to read cookie: ' + args.cookie)
     if (e instanceof Error) {
