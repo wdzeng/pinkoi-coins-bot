@@ -29,7 +29,7 @@ docker run -v /path/to/cookie:/cookie --it hyperbola/pinkoi-coins-bot:v1 --cooki
 ### 看使用說明
 
 ```sh
-docker run -v /path/to/cookie:/cookie --it hyperbola/pinkoi-coins-bot:v1 --help
+docker run --it hyperbola/pinkoi-coins-bot:v1 --help
 ```
 
 ## 參數
