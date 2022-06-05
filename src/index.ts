@@ -22,16 +22,17 @@ program
   .version('0.0.0', '-v, --version')
   .exitOverride((e) => process.exit(e.exitCode === 1 ? EXIT_CODE_INVALID_ARGUMENT : e.exitCode))
 
-program.parse(process.argv)
-const args = program.opts()
-
 async function main() {
+  // Argument validation.
+  program.parse(process.argv)
+  const args = program.opts()
   if (args.checkin === args.solveWeeklyMission) {
     log.error('You should run exactly one of --checkin or --solve-weekly-mission.')
     process.exit(EXIT_CODE_INVALID_ARGUMENT)
   }
 
-  log.debug('Start to load cookie from: ' + args.cookie)
+  // Load cookie.
+  log.debug('Load cookie from: ' + args.cookie)
   let cookie: string
   try {
     cookie = fs.readFileSync(path.resolve(args.cookie), 'utf-8').trim()
@@ -43,47 +44,37 @@ async function main() {
     process.exit(EXIT_CODE_INVALID_ARGUMENT)
   }
   log.info('Cookie loaded.')
-  log.debug('Use cookie: ' + cookie)
+  log.debug('Use cookie: ' + cookie.slice(0, 128) + ' [truncated]')
 
+  // Create a bot.
   const bot = new Bot(cookie)
+
+  // Check user login.
+  log.debug('Check user login.')
   const user = await bot.getUser()
   if (user === undefined) {
     log.error('Login failed. Please check your cookie.')
     process.exit(EXIT_LOGIN_FAILED)
   }
+  log.info(`Login as ${user.nick} <${user.email}>.`)
 
-  log.info(`Login: ${user.nick} <${user.email}>`)
-  if (args.checkin) {
-    try {
-      await bot.checkin()
-      log.info('Checkin succeeded.')
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        log.error('Checkin failed: ' + e.message)
-      }
-      else {
-        log.error('Checkin failed: unknown error')
-        log.error(e)
-        process.exit(EXIT_CODE_UNKNOWN_ERROR)
-      }
+  // Run bot.
+  try {
+    await (args.checkin ? bot.checkin() : bot.solveWeeklyMission())
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      log.error(e.message)
+      log.debug(e.stack)
+      process.exit(EXIT_TASK_FAILED)
     }
+
+    // Unknown error
+    log.error('Task failed: unknown error')
+    log.debug(e)
+    process.exit(EXIT_CODE_UNKNOWN_ERROR)
   }
-  else {
-    try {
-      await bot.solveWeeklyMission()
-      log.info('Mission completed.')
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        log.error('Mission failed: ' + e.message)
-        process.exit(EXIT_TASK_FAILED)
-      }
-      else {
-        log.error('Mission failed: unknown error')
-        log.error(e)
-        process.exit(EXIT_CODE_UNKNOWN_ERROR)
-      }
-    }
-  }
+
+  log.info('Bye Bye!')
 }
 
 main()
