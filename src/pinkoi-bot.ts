@@ -396,7 +396,22 @@ export default class PinkoiBot {
 
   async getUser(): Promise<{ email: string, nick: string } | undefined> {
     const url = 'https://www.pinkoi.com/apiv2/user/meta'
-    const response = await axios.get<PinkoiResponse<User>>(url, { headers: { cookie: this.cookie } })
+    let response: AxiosResponse<PinkoiResponse<User>>
+
+    try {
+      response = await axios.get<PinkoiResponse<User>>(url, { headers: { cookie: this.cookie } })
+    } catch (e: unknown) {
+      if (e instanceof AxiosError) {
+        log.debug('AxiosError: ' + e.code)
+        if (e.code === AxiosError.ERR_FR_TOO_MANY_REDIRECTS) {
+          // Expired cookies
+          log.warn('Cookies may have been expired.')
+          return undefined
+        }
+      }
+      // Unknown error
+      throw e
+    }
 
     if ('error' in response.data && response.data.error.code === 403) {
       return undefined // not logged in
