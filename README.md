@@ -23,7 +23,7 @@ Cookie 是機密資訊，請妥善保存。
 使用 `--help` 參數。
 
 ```sh
-docker run -it hyperbola/pinkoi-coins-bot:v1 --help
+docker run -it hyperbola/pinkoi-coins-bot:1 --help
 ```
 
 ### 每日簽到
@@ -33,7 +33,7 @@ docker run -it hyperbola/pinkoi-coins-bot:v1 --help
 ```sh
 docker run [-it] \
     -v /path/to/cookie:/cookie \
-    hyperbola/pinkoi-coins-bot:v1 --cookie /cookie --checkin
+    hyperbola/pinkoi-coins-bot:1 --cookie /cookie --checkin
 ```
 
 ### 解週末任務
@@ -43,7 +43,7 @@ docker run [-it] \
 ```sh
 docker run [-it] \
     -v /path/to/cookie:/cookie \
-    hyperbola/pinkoi-coins-bot:v1 --cookie /cookie --solve-weekly-mission
+    hyperbola/pinkoi-coins-bot:1 --cookie /cookie --solve-weekly-mission
 ```
 
 ## 參數

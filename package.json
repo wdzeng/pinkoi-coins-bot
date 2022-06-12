@@ -1,6 +1,6 @@
 {
   "name": "pinkoi-coins-bot",
-  "version": "1.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Get pinkoi coins everyday.",
   "scripts": {
