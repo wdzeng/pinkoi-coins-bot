@@ -224,7 +224,7 @@ export default class PinkoiBot {
 
     const d = new Date().getDay()
     if (d === 1 || d === 2 || d === 3 || d === 4) {
-      throw new Error(`mission can only be solved on the weekend: ${missionKey}`)
+      throw new Error(`Mission ${missionKey} can only be solved on the weekend.`)
     }
 
     const sid = 'oliviayaojewellery' // cspell:disable-line
