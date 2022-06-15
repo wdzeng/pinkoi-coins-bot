@@ -85,7 +85,7 @@ export default class PinkoiBot {
   }
 
   private async solveBrowseThreeCategories(mission: WeeklyMission): Promise<void> {
-    // 擊瀏覽三個推薦分類 <a href=\"https://www.pinkoi.com/browse?subcategory=501\">燈具/燈飾</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=516\">香氛蠟燭/燭台</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=549\">乾燥花/永生花</a><br>任務進度：3 / 3
+    // 點擊瀏覽三個推薦分類 <a href=\"https://www.pinkoi.com/browse?subcategory=1407\">護手霜/手足保養</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=506\">擺飾/家飾品</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=1002\">茶葉/漢方茶/水果茶</a><br>任務進度：0 / 3
 
     const missionKey = mission.mission_key
     log.debug('Solve mission: ' + missionKey)
@@ -119,7 +119,7 @@ export default class PinkoiBot {
   }
 
   private async solveViewTopic(mission: WeeklyMission): Promise<void> {
-    // 點擊瀏覽當季的活動頁 👉 <a href=\"https://www.pinkoi.com/topic/pinkoi-brand\">Pinkoi 理想生活新樣貌</a>
+    // 點擊瀏覽當季的活動頁 👉 <a href="https://www.pinkoi.com/topic/experience_tw">週末放假靈感｜手作地毯・流動畫</a>
 
     const missionKey = mission.mission_key
     log.debug('Solve mission: ' + missionKey)
@@ -144,7 +144,7 @@ export default class PinkoiBot {
   }
 
   private async solveAddFavItem(mission: WeeklyMission): Promise<void> {
-    // 將你喜歡的 1 項商品加入慾望清單，即可領取 P Coins<br>👉 任務頁面下方有「你的專屬推薦商品」不妨從那裡開始吧！
+    // 將喜歡的 1 項商品加入慾望清單
 
     const missionKey = mission.mission_key
     const tid = 'PAv3tZXu'
@@ -178,7 +178,7 @@ export default class PinkoiBot {
   }
 
   private async solveViewRecommend(mission: WeeklyMission): Promise<void> {
-    // 點擊商品頁，或此頁底下的「找相似」發現同類、風格型商品
+    // 使用 APP 將喜歡的商品加入收藏夾，分類不同用途的好設計
     // Just visiting https://www.pinkoi.com/recommend/product/<random>?tab=similiar is OK
 
     const missionKey = mission.mission_key
@@ -202,7 +202,7 @@ export default class PinkoiBot {
   }
 
   private async solveAddFavShop(mission: WeeklyMission): Promise<void> {
-    // 在週五、六、日，本週期間內，關注 1 間喜愛的設計館，即可領取 P Coins<br>👉 任務頁面下方推薦了「嚴選品牌推薦」不妨從那裡開始吧！
+    // 在週五、六、日，關注 1 間欣賞的設計館
 
     const missionKey = mission.mission_key
     const sid = 'oliviayaojewellery' // cspell:disable-line
