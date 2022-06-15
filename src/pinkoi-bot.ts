@@ -340,7 +340,7 @@ export default class PinkoiBot {
         }
         else {
           log.warn('Not all missions are solved: ' + unsolvedMissions)
-          log.warn('This may be concurrency issue on Pinkoi server. Keep goin.')
+          log.warn('This may be concurrency issue on Pinkoi server. Keep going on.')
         }
       }
       else {
