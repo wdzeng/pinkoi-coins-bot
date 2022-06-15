@@ -47,3 +47,8 @@ export interface Sign {
 export interface InMissionPeriod {
   in_mission_period: boolean
 }
+
+export interface FavList {
+  favlist_id: string
+  name: string
+}

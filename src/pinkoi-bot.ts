@@ -4,14 +4,14 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import isobject from 'isobject'
 import log from 'loglevel'
-import { InMissionPeriod, PinkoiResponse, PinkoiValidResponse, Redeem, Sign, SignResult, User, WeeklyMission } from './types'
+import { FavList, InMissionPeriod, PinkoiResponse, PinkoiValidResponse, Redeem, Sign, SignResult, User, WeeklyMission } from './types'
 import { sleep } from './util'
 
 const missionKeyNames = [
   'browse_three_subcategory',
   'view_topic',
   'add_fav_item',
-  'view_recommend',
+  'add_to_favlist',
   'add_fav_shop',
   'weekly_bonus'
 ]
@@ -182,17 +182,33 @@ export default class PinkoiBot {
     // Just visiting https://www.pinkoi.com/recommend/product/<random>?tab=similiar is OK
 
     const missionKey = mission.mission_key
-    const productId = 'qLE8qUei'
-    const url = `https://www.pinkoi.com/recommend/product/${productId}?tab=similiar`
+    let url: string
+    let body: any
+    let response: AxiosResponse
+
+    const favListName = 'pinkoi-coins-bot' // the list name
+    const tid = '6k5tF2uK' // the product to be added to the list
     const headers = { cookie: this.cookie, referer }
 
     log.debug('Solve mission: ' + missionKey)
-
     try {
-      log.debug(`${missionKey}: click url: ${url}`)
-      await axios.get<unknown>(url, { headers })
-      log.debug(`${missionKey}: url clicked: ${url}`)
+      // Add a product to a new fav list
+      url = 'https://www.pinkoi.com/apiv3/favlist/add'
+      body = { name: favListName, is_public: 1, tid }
+      response = await axios.post<FavList>(url, body, { headers })
+      const favListId = response.data.favlist_id
+      validatePinkoiResponse(response)
 
+      // wait for a moment
+      await sleep()
+
+      // Delete the list along with the product
+      url = 'https://www.pinkoi.com/apiv3/favlist/delete'
+      body = { favlist_id: favListId, unfav_all: true }
+      response = await axios.post(url, body, { headers })
+      validatePinkoiResponse(response)
+
+      // wait for a moment
       await sleep()
 
       log.info(`Mission ${missionKey} solved.`)
@@ -205,6 +221,12 @@ export default class PinkoiBot {
     // 在週五、六、日，關注 1 間欣賞的設計館
 
     const missionKey = mission.mission_key
+
+    const d = new Date().getDay()
+    if (d === 1 || d === 2 || d === 3 || d === 4) {
+      throw new Error(`mission can only be solved on the weekend: ${missionKey}`)
+    }
+
     const sid = 'oliviayaojewellery' // cspell:disable-line
     const body = { sid }
     const headers = { cookie: this.cookie, referer }
