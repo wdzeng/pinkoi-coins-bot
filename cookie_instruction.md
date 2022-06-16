@@ -26,7 +26,7 @@
 
 ## 步驟五，拿 cookie
 
-承上，給它按下去，可以看見 cookie。
+承上，給它按下去，可以看見 cookie。複製時確保只有一行，不是以空格開頭或結尾。另外，不要複製到最一開始的 `cookie:`。
 
 ![image](https://user-images.githubusercontent.com/39057640/173962283-4cc99c35-892a-4833-a18f-5ecc9cc20dcf.png)
 
