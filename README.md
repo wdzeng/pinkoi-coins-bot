@@ -10,13 +10,16 @@
 
 請先安裝 [docker](https://docker.com)。
 
-Pinkoi 登入的方式眾多。由於沒有辦法模擬 Google 帳號以及其他第三方平台登入的情況，使用者需要自備 cookie 給機器人登入。請將 cookie 字串存在檔案中餵給機器人。關於 cookie 的取得方式，請參考[這個影片](https://www.youtube.com/watch?v=E-j-vlDuYtA)。Pinkoi 的 cookie 通常會長得像下面這樣，注意一定只有一行。
+Pinkoi 登入的方式眾多。由於沒有辦法模擬 Google 帳號以及其他第三方平台登入的情況，使用者需要自備 cookie 給機器人登入。請將 cookie 字串存在檔案中餵給機器人。Pinkoi 的 cookie 通常會長得像下面這樣，注意一定只有一行。
 
 ```txt
 slocale=1; lang=zh_TW; b=20220603xxxxxxxx; __zlcmid=xxxxxxxxxxxxx; sessionid=xxxxxxxxxxxxxxxxxxxxxxxxxxx; sv=1.0; stv=1.0; ad=0; geo=TW; ci=HSQ; tz="Asia/Taipei"; c=TWD; country_code=TW; st=b'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; campaign=mission_game
 ```
 
-Cookie 是機密資訊，請妥善保存。
+關於 cookie 的取得方式，請參考這份[文件](cookie_instruction.md)或這個[影片](https://www.youtube.com/watch?v=E-j-vlDuYtA)。
+
+> **Wanring**
+> Cookie 是機密資訊，請妥善保存。
 
 ### 使用說明
 
