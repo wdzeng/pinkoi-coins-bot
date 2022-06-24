@@ -53,9 +53,11 @@ docker run [-it] \
 
 執行機器人時，必須從 `--checkin` 或 `--solve-weekly-mission` 中選擇恰一個執行。Cookie 是必填。
 
-- `-c`, `--cookie`: cookie 的存放位置
+- `-c`, `--cookie`: cookie 檔案位置
 - `-s`, `--checkin`: 每日簽到
+- `-m`, `--solve-weekly-mission`: 解週末任務
 - `-V`, `--version`: 印出版本
+- `-h`, `--help`: 印出使用方式
 
 ## Exit Code
 
