@@ -8,7 +8,7 @@ import { FavList, InMissionPeriod, PinkoiResponse, PinkoiValidResponse, Redeem, 
 import { sleep } from './util'
 
 const missionKeyNames = [
-  'browse_three_subcategory',
+  'search_hot_keyword',
   'view_topic',
   'add_fav_item',
   'add_to_favlist',
@@ -84,8 +84,8 @@ export default class PinkoiBot {
   constructor(private readonly cookie: string) {
   }
 
-  private async solveBrowseThreeCategories(mission: WeeklyMission): Promise<void> {
-    // 點擊瀏覽三個推薦分類 <a href=\"https://www.pinkoi.com/browse?subcategory=1407\">護手霜/手足保養</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=506\">擺飾/家飾品</a>、<a href=\"https://www.pinkoi.com/browse?subcategory=1002\">茶葉/漢方茶/水果茶</a><br>任務進度：0 / 3
+  private async searchHotKeywords(mission: WeeklyMission): Promise<void> {
+    // 點擊瀏覽 Top 3 大家都在搜尋的關鍵字 👉 <a href=\"https://www.pinkoi.com/search?q=結婚禮物\">結婚禮物</a>、<a href=\"https://www.pinkoi.com/search?q=手機殼\">手機殼</a>、<a href=\"https://www.pinkoi.com/search?q=永生花\">永生花</a><br>任務進度：0 / 3
 
     const missionKey = mission.mission_key
     log.debug('Solve mission: ' + missionKey)
@@ -338,7 +338,7 @@ export default class PinkoiBot {
         log.info(`Mission ${keyName} already solved.`)
         return Promise.resolve()
       }
-      await (missionStatus[0] === 0 ? this.solveBrowseThreeCategories(missionList[0]) : alreadySolved(missionKeyNames[0]))
+      await (missionStatus[0] === 0 ? this.searchHotKeywords(missionList[0]) : alreadySolved(missionKeyNames[0]))
       await (missionStatus[1] === 0 ? this.solveViewTopic(missionList[1]) : alreadySolved(missionKeyNames[1]))
       await (missionStatus[2] === 0 ? this.solveAddFavItem(missionList[2]) : alreadySolved(missionKeyNames[2]))
       await (missionStatus[3] === 0 ? this.solveViewRecommend(missionList[3]) : alreadySolved(missionKeyNames[3]))
