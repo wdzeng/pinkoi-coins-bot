@@ -56,6 +56,7 @@ docker run [-it] \
 - `-c`, `--cookie`: cookie 檔案位置
 - `-s`, `--checkin`: 每日簽到
 - `-m`, `--solve-weekly-mission`: 解週末任務
+- `-q`, `--quiet`: 不要印出訊息；警告和錯誤訊息仍會印出
 - `-V`, `--version`: 印出版本
 - `-h`, `--help`: 印出使用方式
 

@@ -12,8 +12,6 @@ const EXIT_CODE_UNKNOWN_ERROR = 255
 const version = '1.1.1'
 const majorVersion = version.split('.')[0]
 
-log.setDefaultLevel(process.env['DEBUG'] ? 'debug' : 'info')
-
 program
   .name('docker run -v /path/to/cookie:/cookie -it hyperbola/pinkoi-coins-bot:' + majorVersion)
   .usage('--cookie /cookie [--checkin | --solve-weekly-usage]')
@@ -21,13 +19,27 @@ program
   .requiredOption('-c, --cookie <path>', 'path to cookie')
   .option('-s, --checkin', 'checkin Pinkoi')
   .option('-m, --solve-weekly-mission', 'solve Pinkoi weekly mission')
+  .option('-q, --quiet', 'do not print messages')
   .helpOption('-h, --help', 'show this message')
   .version(version, '-V, --version')
   .exitOverride((e) => process.exit(e.exitCode === 1 ? EXIT_CODE_INVALID_ARGUMENT : e.exitCode))
 
+const args = program.parse(process.argv).opts()
+
+if (process.env['DEBUG']) {
+  log.setDefaultLevel('debug')
+  if (args.quiet) {
+    log.warn('Option `--quiet` is ignored in debug mode.')
+  }
+}
+else if (args.quiet) {
+  log.setDefaultLevel('warn')
+}
+else {
+  log.setDefaultLevel('info')
+}
+
 // Argument validation.
-program.parse(process.argv)
-const args = program.opts()
 if (args.checkin === args.solveWeeklyMission) {
   log.error('You should run exactly one of --checkin or --solve-weekly-mission.')
   process.exit(EXIT_CODE_INVALID_ARGUMENT)
