@@ -19,7 +19,7 @@ program
   .option('-s, --checkin', 'checkin Pinkoi')
   .option('-m, --solve-weekly-mission', 'solve Pinkoi weekly mission')
   .helpOption('-h, --help', 'show this message')
-  .version('1.1.1', '-v, --version')
+  .version('1.1.1', '-V, --version')
   .exitOverride((e) => process.exit(e.exitCode === 1 ? EXIT_CODE_INVALID_ARGUMENT : e.exitCode))
 
 async function main() {

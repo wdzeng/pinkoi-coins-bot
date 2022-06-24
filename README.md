@@ -55,7 +55,7 @@ docker run [-it] \
 
 - `-c`, `--cookie`: cookie 的存放位置
 - `-s`, `--checkin`: 每日簽到
-- `-m`, `--solve-weekly-mission`：解週末任務
+- `-V`, `--version`: 印出版本
 
 ## Exit Code
 
