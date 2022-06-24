@@ -24,7 +24,7 @@ jobs:
       - uses: wdzeng/image@v1
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-password: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-password: ${{ secrets.DOCKERHUB_PASSWORD }}
   tag:
     name: Add tags to repository
     needs:
