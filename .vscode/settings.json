@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///home/hyperbola/repo/pinkoi-coins-bot/.github/workflows/build.yml"
+    }
+}
