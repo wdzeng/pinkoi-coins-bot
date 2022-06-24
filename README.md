@@ -8,7 +8,7 @@
 
 ## 執行方式
 
-請先安裝 [docker](https://docker.com)。
+請先安裝 [docker](https://docker.com) 或 [podman](https://podman.io/)。映像可於 Docker Hub `hyperbola/pinkoi-coins-bot` 或 GitHub Container Registry (ghcr) [`ghcr.io/wdzeng/pinkoi-coins-bot`](https://ghcr.io/wdzeng/pinkoi-coins-bot) 取得。最新的 tag 為 `1`，tag 清單可見於 Docker Hub 或 ghcr。
 
 Pinkoi 登入的方式眾多。由於沒有辦法模擬 Google 帳號以及其他第三方平台登入的情況，使用者需要自備 cookie 給機器人登入。請將 cookie 字串存在檔案中餵給機器人。Pinkoi 的 cookie 通常會長得像下面這樣，注意一定只有一行。
 
