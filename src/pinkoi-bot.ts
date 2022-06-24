@@ -375,7 +375,7 @@ export default class PinkoiBot {
           log.info(`Mission ${missionKeyNames[i]} already redeemed.`)
         }
         else {
-          this.redeemWeeklyMission(missionKeyNames[i])
+          await this.redeemWeeklyMission(missionKeyNames[i])
           await sleep()
         }
       }
