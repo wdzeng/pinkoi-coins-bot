@@ -15,7 +15,7 @@ const missionKeyNames = [
   'add_fav_shop',
   'weekly_bonus'
 ]
-const urlRegex = /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/g
+const urlRegex = /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w\p{Script=Han}.,@?^=%&:\/~+#-]*[\w\p{Script=Han}@?^=%&\/~+#-])/gu
 const referer = 'https://www.pinkoi.com/event/mission_game'
 
 function outdate(): never {
@@ -105,11 +105,11 @@ export default class PinkoiBot {
         log.debug(`${missionKey}: url clicked: ${url}`)
       }
 
-      await solve(urls[0])
+      await solve(encodeURI(urls[0]))
       await sleep()
-      await solve(urls[1])
+      await solve(encodeURI(urls[1]))
       await sleep()
-      await solve(urls[2])
+      await solve(encodeURI(urls[2]))
       await sleep()
 
       log.info(`Mission ${missionKey} solved.`)
