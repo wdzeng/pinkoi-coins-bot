@@ -9,27 +9,32 @@ const EXIT_LOGIN_FAILED = 69
 const EXIT_CODE_INVALID_ARGUMENT = 87
 const EXIT_CODE_UNKNOWN_ERROR = 255
 
+const version = '1.1.1'
+const majorVersion = version.split('.')[0]
+
 log.setDefaultLevel(process.env['DEBUG'] ? 'debug' : 'info')
 
 program
-  .name('docker run -v /path/to/cookie:/cookie -it hyperbola/pinkoi-coins-bot:1')
+  .name('docker run -v /path/to/cookie:/cookie -it hyperbola/pinkoi-coins-bot:' + majorVersion)
   .usage('--cookie /cookie [--checkin | --solve-weekly-usage]')
   .description('A bot to checkin to get Pinkoi coins.')
   .requiredOption('-c, --cookie <path>', 'path to cookie')
   .option('-s, --checkin', 'checkin Pinkoi')
   .option('-m, --solve-weekly-mission', 'solve Pinkoi weekly mission')
   .helpOption('-h, --help', 'show this message')
-  .version('1.1.1', '-V, --version')
+  .version(version, '-V, --version')
   .exitOverride((e) => process.exit(e.exitCode === 1 ? EXIT_CODE_INVALID_ARGUMENT : e.exitCode))
 
+// Argument validation.
+program.parse(process.argv)
+const args = program.opts()
+if (args.checkin === args.solveWeeklyMission) {
+  log.error('You should run exactly one of --checkin or --solve-weekly-mission.')
+  process.exit(EXIT_CODE_INVALID_ARGUMENT)
+}
+
 async function main() {
-  // Argument validation.
-  program.parse(process.argv)
-  const args = program.opts()
-  if (args.checkin === args.solveWeeklyMission) {
-    log.error('You should run exactly one of --checkin or --solve-weekly-mission.')
-    process.exit(EXIT_CODE_INVALID_ARGUMENT)
-  }
+  log.info('Start pinkoi coins bot v' + version + '.')
 
   // Load cookie.
   log.debug('Load cookie from: ' + args.cookie)
