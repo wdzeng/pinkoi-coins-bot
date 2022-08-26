@@ -21,10 +21,12 @@ jobs:
           run_install: true
       - name: Build project
         run: pnpm build
-      - uses: wdzeng/image@v1
+      - uses: wdzeng/image@v2
         with:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repo_description: Get pinkoi coins everyday
+          repo_license: MIT
   tag:
     name: Add tags to repository
     needs:
