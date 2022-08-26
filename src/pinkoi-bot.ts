@@ -1,9 +1,6 @@
-// cspell:ignore isobject
-// cspell:ignore successed
-
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import isobject from 'isobject'
-import log from 'loglevel'
+import log from 'loglevel'  // c-spell: ignore loglevel
 import { FavList, InMissionPeriod, PinkoiResponse, PinkoiValidResponse, Redeem, Sign, SignResult, User, WeeklyMission } from './types'
 import { sleep } from './util'
 
@@ -204,7 +201,7 @@ export default class PinkoiBot {
 
       // Delete the list along with the product
       url = 'https://www.pinkoi.com/apiv3/favlist/delete'
-      body = { favlist_id: favListId, unfav_all: true }
+      body = { favlist_id: favListId, unfav_all: true }  // c-spell: ignore unfav
       response = await axios.post(url, body, { headers })
       validatePinkoiResponse(response)
 
@@ -296,7 +293,7 @@ export default class PinkoiBot {
       const result = response.data
       log.debug(JSON.stringify(result))
 
-      if (result.result[0].successed !== true) {
+      if (result.result[0].successed !== true) {  // c-spell: ignore successed
         if (process.env['STRICT']) {
           throw new Error('mission not solved')
         }
