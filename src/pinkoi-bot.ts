@@ -14,7 +14,7 @@ const urlRegex = /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w\p{Script=Han}.,@?^=%
 const referer = 'https://www.pinkoi.com/event/mission_game'
 
 function outdate(): never {
-  log.error('Unexpected mission content. Maybe this bot is outdated. Try passing environment DEBUG=1 to see what occurred.')
+  log.error('Unexpected mission content. Maybe this bot is outdated. Try passing environment variable DEBUG=1 to see what occurred.')
   throw new Error('unexpected mission content')
 }
 
