@@ -5,12 +5,10 @@ import { FavList, InMissionPeriod, PinkoiResponse, PinkoiValidResponse, Redeem, 
 import { sleep } from './util'
 
 const missionKeyNames = [
-  'search_hot_keyword',
   'view_topic',
-  'add_fav_item',
-  'add_to_favlist',
-  'add_fav_shop',
-  'weekly_bonus'
+  'add_to_favlist',  // c-spell: ignore favlist
+  'weekly_bonus',
+  'add_fav_item_or_shop'
 ]
 const urlRegex = /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w\p{Script=Han}.,@?^=%&:\/~+#-]*[\w\p{Script=Han}@?^=%&\/~+#-])/gu
 const referer = 'https://www.pinkoi.com/event/mission_game'
@@ -31,7 +29,7 @@ function validateWeeklyMissionContent(_mission: PinkoiValidResponse<unknown>): a
   const mission: any = _mission
   const missionCount: unknown = mission?.result?.length
   if (missionCount !== missionKeyNames.length) {
-    log.debug('Expected 6 missions.')
+    log.debug(`Expected ${missionKeyNames.length} missions but got ${missionCount}.`)
     log.debug(mission)
     outdate()
   }
@@ -81,40 +79,6 @@ export default class PinkoiBot {
   constructor(private readonly cookie: string) {
   }
 
-  private async searchHotKeywords(mission: WeeklyMission): Promise<void> {
-    // 點擊瀏覽 Top 3 大家都在搜尋的關鍵字 👉 <a href=\"https://www.pinkoi.com/search?q=結婚禮物\">結婚禮物</a>、<a href=\"https://www.pinkoi.com/search?q=手機殼\">手機殼</a>、<a href=\"https://www.pinkoi.com/search?q=永生花\">永生花</a><br>任務進度：0 / 3
-
-    const missionKey = mission.mission_key
-    log.debug('Solve mission: ' + missionKey)
-
-    try {
-      const urls: string[] | null = mission.introduction.match(urlRegex)
-      log.debug(`${missionKey}: got urls: ${JSON.stringify(urls)}`)
-
-      if (urls?.length !== 3) {
-        throw new Error('expected 3 urls')
-      }
-
-      const self = this
-      async function solve(url: string) {
-        log.debug(`${missionKey}: click url: ${url}`)
-        await axios.get<unknown>(url, { headers: { cookie: self.cookie, referer } })
-        log.debug(`${missionKey}: url clicked: ${url}`)
-      }
-
-      await solve(encodeURI(urls[0]))
-      await sleep()
-      await solve(encodeURI(urls[1]))
-      await sleep()
-      await solve(encodeURI(urls[2]))
-      await sleep()
-
-      log.info(`Mission ${missionKey} solved.`)
-    } catch (e: unknown) {
-      handleMissionError(missionKey, e)
-    }
-  }
-
   private async solveViewTopic(mission: WeeklyMission): Promise<void> {
     // 點擊瀏覽當季的活動頁 👉 <a href="https://www.pinkoi.com/topic/experience_tw">週末放假靈感｜手作地毯・流動畫</a>
 
@@ -140,8 +104,10 @@ export default class PinkoiBot {
     }
   }
 
-  private async solveAddFavItem(mission: WeeklyMission): Promise<void> {
-    // 將喜歡的 1 項商品加入慾望清單
+  private async solveAddFavItemOrShop(mission: WeeklyMission): Promise<void> {
+    // 將喜歡的 1 項商品加入慾望清單，或是關注 1 間欣賞的設計館
+
+    // Here we add an item into fav list.
 
     const missionKey = mission.mission_key
     const tid = 'PAv3tZXu'
@@ -174,7 +140,7 @@ export default class PinkoiBot {
     }
   }
 
-  private async solveViewRecommend(mission: WeeklyMission): Promise<void> {
+  private async solveAddToFavList(mission: WeeklyMission): Promise<void> {
     // 使用 APP 將喜歡的商品加入收藏夾，分類不同用途的好設計
     // Just visiting https://www.pinkoi.com/recommend/product/<random>?tab=similiar is OK
 
@@ -206,46 +172,6 @@ export default class PinkoiBot {
       validatePinkoiResponse(response)
 
       // wait for a moment
-      await sleep()
-
-      log.info(`Mission ${missionKey} solved.`)
-    } catch (e: unknown) {
-      handleMissionError(missionKey, e)
-    }
-  }
-
-  private async solveAddFavShop(mission: WeeklyMission): Promise<void> {
-    // 在週五、六、日，關注 1 間欣賞的設計館
-
-    const missionKey = mission.mission_key
-
-    const d = new Date().getDay()
-    if (d === 1 || d === 2 || d === 3 || d === 4) {
-      throw new Error(`Mission ${missionKey} can only be solved on the weekend.`)
-    }
-
-    const sid = 'oliviayaojewellery' // cspell:disable-line
-    const body = { sid }
-    const headers = { cookie: this.cookie, referer }
-    let response: AxiosResponse<PinkoiResponse>
-
-    log.debug('Solve mission: ' + missionKey)
-
-    try {
-      // Add a store to favor list
-      log.debug(`${missionKey}: add favor: ${sid}`)
-      response = await axios.post('https://www.pinkoi.com/apiv2/shop/fav', body, { headers })
-      validatePinkoiResponse(response)
-      log.debug(`${missionKey}: favor added: ${sid}`)
-
-      await sleep()
-
-      // Remove a store from favor list
-      log.debug(`${missionKey}: remove favor: ${sid}`)
-      response = await axios.post('https://www.pinkoi.com/apiv2/shop/unfav', body, { headers })
-      validatePinkoiResponse(response)
-      log.debug(`${missionKey}: favor removed: ${sid}`)
-
       await sleep()
 
       log.info(`Mission ${missionKey} solved.`)
@@ -335,11 +261,10 @@ export default class PinkoiBot {
         log.info(`Mission ${keyName} already solved.`)
         return Promise.resolve()
       }
-      await (missionStatus[0] === 0 ? this.searchHotKeywords(missionList[0]) : alreadySolved(missionKeyNames[0]))
-      await (missionStatus[1] === 0 ? this.solveViewTopic(missionList[1]) : alreadySolved(missionKeyNames[1]))
-      await (missionStatus[2] === 0 ? this.solveAddFavItem(missionList[2]) : alreadySolved(missionKeyNames[2]))
-      await (missionStatus[3] === 0 ? this.solveViewRecommend(missionList[3]) : alreadySolved(missionKeyNames[3]))
-      await (missionStatus[4] === 0 ? this.solveAddFavShop(missionList[4]) : alreadySolved(missionKeyNames[4]))
+
+      await (missionStatus[0] === 0 ? this.solveViewTopic(missionList[0]) : alreadySolved(missionKeyNames[0]))
+      await (missionStatus[1] === 0 ? this.solveAddToFavList(missionList[1]) : alreadySolved(missionKeyNames[1]))
+      await (missionStatus[3] === 0 ? this.solveAddFavItemOrShop(missionList[3]) : alreadySolved(missionKeyNames[3]))
 
       // Check if all five missions should have been solved.
       // Note: there are bugs on pinkoi server. The mission may be showed
@@ -350,7 +275,7 @@ export default class PinkoiBot {
       log.debug('Mission status updated: ' + missionStatus)
 
       const unsolvedMissions = []
-      for (let i = 0; i < 5; i++) {
+      for (let i of [0, 1, 3]) {
         if (missionStatus[i] === 0) unsolvedMissions.push(i)
       }
       if (unsolvedMissions.length > 0) {
@@ -367,7 +292,7 @@ export default class PinkoiBot {
       }
 
       // Click redeem buttons for six missions.
-      for (let i = 0; i < missionKeyNames.length; i++) {
+      for (let i of [0, 1, 3, 2]) {
         if (missionStatus[i] === 2) {
           log.info(`Mission ${missionKeyNames[i]} already redeemed.`)
         }
