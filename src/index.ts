@@ -9,7 +9,7 @@ const EXIT_LOGIN_FAILED = 69
 const EXIT_CODE_INVALID_ARGUMENT = 87
 const EXIT_CODE_UNKNOWN_ERROR = 255
 
-const version = '1.2.0'
+const version = '1.3.0'
 const majorVersion = version.split('.')[0]
 
 program
