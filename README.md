@@ -16,7 +16,7 @@ Pinkoi 登入的方式眾多。由於沒有辦法模擬 Google 帳號以及其�
 slocale=1; lang=zh_TW; b=20220603xxxxxxxx; __zlcmid=xxxxxxxxxxxxx; sessionid=xxxxxxxxxxxxxxxxxxxxxxxxxxx; sv=1.0; stv=1.0; ad=0; geo=TW; ci=HSQ; tz="Asia/Taipei"; c=TWD; country_code=TW; st=b'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; campaign=mission_game
 ```
 
-關於 cookie 的取得方式，請參考這份[文件](cookie_instruction.md)或這個[影片](https://www.youtube.com/watch?v=E-j-vlDuYtA)。
+關於 cookie 的取得方式，請參考這份[文件](docs/cookie_instruction.md)或這個[影片](https://www.youtube.com/watch?v=E-j-vlDuYtA)。
 
 > **Wanring**
 > Cookie 是機密資訊，請妥善保存。
