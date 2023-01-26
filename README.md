@@ -18,7 +18,7 @@ slocale=1; lang=zh_TW; b=20220603xxxxxxxx; __zlcmid=xxxxxxxxxxxxx; sessionid=xxx
 
 關於 cookie 的取得方式，請參考這份[文件](docs/cookie_instruction.md)或這個[影片](https://www.youtube.com/watch?v=E-j-vlDuYtA)。
 
-> **Wanring**
+> **Warning**
 > Cookie 是機密資訊，請妥善保存。
 
 ### 使用說明

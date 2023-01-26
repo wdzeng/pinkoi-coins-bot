@@ -1,6 +1,6 @@
 # 拿到 Cookie 的方式
 
-這篇文章說明如何拿到自己的 pincoi cookie。拿到 cookie 之後，就可以把 cookie 餵給機器人做自動化登入。這篇以 Chrome 瀏覽器為範例。
+這篇文章說明如何拿到自己的 Pinkoi cookie。拿到 cookie 之後，就可以把 cookie 餵給機器人做自動化登入。這篇以 Chrome 瀏覽器為範例。
 
 ## 步驟一、登入 Pinkoi
 
@@ -24,7 +24,7 @@
 
 ![image](https://user-images.githubusercontent.com/39057640/173961727-ee17f3d8-962b-412f-b533-ca8dd96542bc.png)
 
-## 步驟五，拿 cookie
+## 步驟五、拿 Cookie
 
 承上，給它按下去，可以看見 cookie。複製時確保只有一行，不是以空格開頭或結尾。另外，不要複製到最一開始的 `cookie:`。
 
