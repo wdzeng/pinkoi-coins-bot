@@ -3,11 +3,13 @@ import path from 'path'
 import log from 'loglevel' // cspell: ignore loglevel
 import { program } from 'commander'
 import Bot from './pinkoi-bot'
-
-const EXIT_TASK_FAILED = 1
-const EXIT_LOGIN_FAILED = 69
-const EXIT_CODE_INVALID_ARGUMENT = 87
-const EXIT_CODE_UNKNOWN_ERROR = 255
+import { setupLogging, validateArgs } from './util'
+import {
+  EXIT_CODE_INVALID_ARGUMENT,
+  EXIT_CODE_UNKNOWN_ERROR,
+  EXIT_LOGIN_FAILED,
+  EXIT_TASK_FAILED
+} from './exit_code'
 
 const version = '1.3.0'
 const majorVersion = version.split('.')[0]
@@ -30,25 +32,9 @@ program
   )
 
 const args = program.parse(process.argv).opts()
+validateArgs(args)
 
-if (process.env['DEBUG']) {
-  log.setDefaultLevel('debug')
-  if (args.quiet) {
-    log.warn('Option `--quiet` is ignored in debug mode.')
-  }
-} else if (args.quiet) {
-  log.setDefaultLevel('warn')
-} else {
-  log.setDefaultLevel('info')
-}
-
-// Argument validation.
-if (args.checkin === args.solveWeeklyMission) {
-  log.error(
-    'You should run exactly one of --checkin or --solve-weekly-mission.'
-  )
-  process.exit(EXIT_CODE_INVALID_ARGUMENT)
-}
+setupLogging(args)
 
 async function main() {
   log.info('Start pinkoi coins bot v' + version + '.')

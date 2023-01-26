@@ -1,0 +1,4 @@
+export const EXIT_TASK_FAILED = 1
+export const EXIT_LOGIN_FAILED = 69
+export const EXIT_CODE_INVALID_ARGUMENT = 87
+export const EXIT_CODE_UNKNOWN_ERROR = 255
