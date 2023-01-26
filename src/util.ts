@@ -1,5 +1,6 @@
-import log from 'loglevel' // cspell: ignore loglevel
 import { OptionValues } from 'commander'
+import log from 'loglevel' // cspell: ignore loglevel
+
 import { EXIT_CODE_INVALID_ARGUMENT } from './exit_code'
 
 export function sleep() {

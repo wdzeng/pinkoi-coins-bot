@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import isobject from 'isobject'
 import log from 'loglevel' // c-spell: ignore loglevel
+
 import {
   FavList,
   InMissionPeriod,

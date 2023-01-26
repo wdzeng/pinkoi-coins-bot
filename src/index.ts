@@ -1,15 +1,17 @@
-import fs from 'fs'
-import path from 'path'
-import log from 'loglevel' // cspell: ignore loglevel
+import fs from 'node:fs'
+import path from 'node:path'
+
 import { program } from 'commander'
-import Bot from './pinkoi-bot'
-import { setupLogging, validateArgs } from './util'
+import log from 'loglevel' // cspell: ignore loglevel
+
 import {
   EXIT_CODE_INVALID_ARGUMENT,
   EXIT_CODE_UNKNOWN_ERROR,
   EXIT_LOGIN_FAILED,
   EXIT_TASK_FAILED
 } from './exit_code'
+import Bot from './pinkoi-bot'
+import { setupLogging, validateArgs } from './util'
 
 const version = '1.3.0'
 const majorVersion = version.split('.')[0]
