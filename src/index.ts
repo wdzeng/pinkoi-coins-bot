@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import log from 'loglevel'
+import log from 'loglevel' // cspell: ignore loglevel
 import { program } from 'commander'
 import Bot from './pinkoi-bot'
 

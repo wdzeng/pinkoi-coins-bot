@@ -16,7 +16,7 @@ import { sleep } from './util'
 
 const missionKeyNames = [
   'view_topic',
-  'add_to_favlist', // c-spell: ignore favlist
+  'add_to_favlist',
   'weekly_bonus',
   'add_fav_item_or_shop'
 ]
