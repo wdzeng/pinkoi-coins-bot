@@ -9,7 +9,9 @@ export interface PinkoiValidResponse<T> {
   result: T[]
 }
 
-export type PinkoiResponse<T = unknown> = PinkoiErrorResponse | PinkoiValidResponse<T>
+export type PinkoiResponse<T = unknown> =
+  | PinkoiErrorResponse
+  | PinkoiValidResponse<T>
 
 export interface User {
   email: string
@@ -17,7 +19,7 @@ export interface User {
 }
 
 export interface WeeklyMission {
-  'mission_key': string
+  mission_key: string
   introduction: string
   achieved: boolean
   redeemed: boolean

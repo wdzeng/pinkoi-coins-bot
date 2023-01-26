@@ -1,3 +1,3 @@
 export function sleep() {
-  return new Promise(res => setTimeout(res, 500))
+  return new Promise((res) => setTimeout(res, 500))
 }
