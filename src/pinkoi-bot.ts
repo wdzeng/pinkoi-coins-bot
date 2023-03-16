@@ -21,8 +21,6 @@ const missionKeyNames = [
   'add_fav_item',
   'weekly_bonus'
 ]
-const urlRegex =
-  /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w\p{Script=Han}.,@?^=%&:\/~+#-]*[\w\p{Script=Han}@?^=%&\/~+#-])/gu
 const referer = 'https://www.pinkoi.com/event/mission_game'
 
 function outdate(): never {
@@ -101,24 +99,26 @@ export default class PinkoiBot {
     // 點擊瀏覽當季的活動頁 👉 <a href="https://www.pinkoi.com/topic/experience_tw">週末放假靈感｜手作地毯・流動畫</a>
 
     const missionKey = mission.mission_key
-    log.debug('Solve mission: ' + missionKey)
+    log.debug('Solving mission: %s', missionKey)
 
+    const headers = { cookie: this.cookie, referer }
+    const urlRegex =
+      /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w\p{Script=Han}.,@?^=%&:\/~+#-]*[\w\p{Script=Han}@?^=%&\/~+#-])/gu
     try {
       const urls: string[] | null = mission.introduction.match(urlRegex)
-      log.debug(`${missionKey}: got urls: ${JSON.stringify(urls)}`)
+      log.debug('%s: got URLs: %s', missionKey, JSON.stringify(urls))
 
       if (urls?.length !== 1) {
-        throw new Error('expected 1 url')
+        log.error('Found more than one URLs: %s', JSON.stringify(urls))
+        throw new Error(`Expected 1 URL; found ${urls?.length}.`)
       }
 
-      log.debug(`${missionKey}: click url: ${urls[0]}`)
-      await axios.get<unknown>(urls[0], {
-        headers: { cookie: this.cookie, referer }
-      })
-      log.debug(`${missionKey}: url clicked: ${urls[0]}`)
+      log.debug('%s: clicking URL: %s', missionKey, urls[0])
+      await axios.get<unknown>(urls[0], { headers })
+      log.debug('%s: URL clicked: %s', missionKey, urls[0])
       await sleep()
 
-      log.info(`Mission ${missionKey} solved.`)
+      log.info('Mission completed: %s', missionKey)
     } catch (e: unknown) {
       handleMissionError(missionKey, e)
     }
@@ -129,7 +129,7 @@ export default class PinkoiBot {
     const body = { sid: shopId }
     const headers = { cookie: this.cookie, referer }
     log.debug('Adding fav shop: %s', shopId)
-    await axios.post(url, body, { headers: headers })
+    await axios.post(url, body, { headers })
     log.debug('Added fav shop: %s', shopId)
   }
 
@@ -138,7 +138,7 @@ export default class PinkoiBot {
     const body = { sid: shopId }
     const headers = { cookie: this.cookie, referer }
     log.debug('Removing fav shop: %s', shopId)
-    await axios.post(url, body, { headers: headers })
+    await axios.post(url, body, { headers })
     log.debug('Removed fav shop: %s', shopId)
   }
 
@@ -153,7 +153,6 @@ export default class PinkoiBot {
     try {
       await this.addFavShop(shopId)
       await sleep()
-      log.debug('Add fav shop: %s', shopId)
       await this.removeFavShop(shopId)
       await sleep()
     } catch (e: unknown) {
@@ -208,7 +207,7 @@ export default class PinkoiBot {
 
     const missionKey = mission.mission_key
     const favListName = 'pinkoi-coins-bot'
-    const itemIds = ['6k5tF2uK', 'zDzEKiTR', 'YRcUicek']  // cspell:disable-line
+    const itemIds = ['6k5tF2uK', 'zDzEKiTR', 'YRcUicek'] // cspell: disable-line
 
     log.debug('Solving mission: %s', missionKey)
     try {
@@ -232,14 +231,14 @@ export default class PinkoiBot {
   async requireInWeeklyMissionPeriod(): Promise<void> {
     // Check if it is mission period now.
 
-    log.debug('Check if now is in mission period.')
+    log.debug('Checking if is in mission period now.')
 
     const url = 'https://www.pinkoi.com/apiv2/mission_game/in_mission_period'
     const response = await axios.get<PinkoiResponse<InMissionPeriod>>(url)
     validatePinkoiResponse(response)
 
     if (response.data.result[0].in_mission_period !== true) {
-      throw new Error('not in weekly mission period.')
+      throw new Error('Not in weekly mission period now.')
     }
 
     log.debug('In mission period.')
@@ -259,7 +258,7 @@ export default class PinkoiBot {
   }
 
   private async redeemWeeklyMission(missionKey: string): Promise<void> {
-    log.debug('Redeem mission: ' + missionKey)
+    log.debug('Redeem mission: %s', missionKey)
 
     try {
       const url = 'https://www.pinkoi.com/apiv2/mission_game/redeem'
@@ -275,23 +274,25 @@ export default class PinkoiBot {
       if (result.result[0].successed !== true) {
         // c-spell: ignore successed
         if (process.env['STRICT']) {
-          throw new Error('mission not solved')
+          throw new Error('Mission not completed.')
         } else {
           log.warn(
-            `Mission ${missionKey} not redeemed. This may be concurrency issue on Pinkoi server. Keep goin.`
+            'Mission %s not redeemed. \
+            This may be concurrency issue on Pinkoi server. Keep going.',
+            missionKey
           )
         }
       } else {
-        log.info(`Mission ${missionKey} redeemed.`)
+        log.info('Mission redeemed: %s', missionKey)
       }
     } catch (e) {
       if (e instanceof Error) {
-        log.error('Mission not redeemed: ' + missionKey + ': ' + e.message)
+        log.error('Mission not redeemed: %s: %s', missionKey, e.message)
         if (e instanceof AxiosError) {
           log.debug(JSON.stringify(e.response?.data))
         }
       } else {
-        log.error('Mission not redeemed: ' + missionKey + ': unknown error')
+        log.error('Mission not redeemed: %s: unknown error', missionKey)
       }
       throw e
     }
@@ -303,14 +304,14 @@ export default class PinkoiBot {
       await this.requireInWeeklyMissionPeriod()
 
       // Get mission list.
-      log.debug('Get mission list.')
+      log.debug('Fetching mission list.')
       let missionList = await this.getWeeklyMissionList()
       let missionStatus = getWeeklyMissionStatus(missionList)
-      log.debug('Mission list fetched: ' + JSON.stringify(missionList))
+      log.debug('Mission list fetched: %s', JSON.stringify(missionList))
 
       // Solve missions if not solved.
       function alreadySolved(keyName: string) {
-        log.info(`Mission ${keyName} already solved.`)
+        log.info('Mission %s already solved.', keyName)
         return Promise.resolve()
       }
 
@@ -327,10 +328,10 @@ export default class PinkoiBot {
       // Check if all five missions should have been solved.
       // Note: there are bugs on pinkoi server. The mission may be showed
       // not solved but can be redeemed.
-      log.debug('Update mission status.')
+      log.debug('Updating mission status.')
       missionList = await this.getWeeklyMissionList()
       missionStatus = getWeeklyMissionStatus(missionList)
-      log.debug('Mission status updated: ' + missionStatus)
+      log.debug('Mission status updated: %d', missionStatus)
 
       const unsolvedMissions = []
       for (let i of [0, 1, 3]) {
@@ -338,9 +339,9 @@ export default class PinkoiBot {
       }
       if (unsolvedMissions.length > 0) {
         if (process.env['STRICT']) {
-          throw new Error('not all missions are solved: ' + unsolvedMissions)
+          throw new Error('Not all missions are solved: ' + unsolvedMissions)
         } else {
-          log.warn('Not all missions are solved: ' + unsolvedMissions)
+          log.warn('Not all missions are solved: %s', unsolvedMissions)
           log.warn(
             'This may be concurrency issue on Pinkoi server. Keep going on.'
           )
@@ -352,7 +353,7 @@ export default class PinkoiBot {
       // Click redeem buttons for six missions.
       for (let i of [0, 1, 3, 2]) {
         if (missionStatus[i] === 2) {
-          log.info(`Mission ${missionKeyNames[i]} already redeemed.`)
+          log.info('Mission already redeemed: %s', missionKeyNames[i])
         } else {
           await this.redeemWeeklyMission(missionKeyNames[i])
           await sleep()
@@ -363,7 +364,7 @@ export default class PinkoiBot {
       log.info('Weekly missions all done.')
     } catch (e: unknown) {
       if (e instanceof AxiosError) {
-        log.error('Status code: ' + e.response?.status)
+        log.error('Status code: %s', e.response?.status)
         log.error(JSON.stringify(e.response?.data))
         log.debug(e)
       }
@@ -393,7 +394,7 @@ export default class PinkoiBot {
     const status = await this.getCheckinStatus()
     if (!status[day]) {
       // Should not happened
-      throw new Error('checkin failed: unknown error')
+      throw new Error('Check-in failed: unknown error')
     }
   }
 
