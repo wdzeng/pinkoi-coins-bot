@@ -17,9 +17,9 @@ import { sleep } from './util'
 
 const missionKeyNames = [
   'view_topic',
-  'add_to_favlist',
-  'weekly_bonus',
-  'add_fav_item_or_shop'
+  'add_fav_shop',
+  'add_fav_item',
+  'weekly_bonus'
 ]
 const urlRegex =
   /https:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w\p{Script=Han}.,@?^=%&:\/~+#-]*[\w\p{Script=Han}@?^=%&\/~+#-])/gu
@@ -124,85 +124,106 @@ export default class PinkoiBot {
     }
   }
 
-  private async solveAddFavItemOrShop(mission: WeeklyMission): Promise<void> {
-    // 將喜歡的 1 項商品加入慾望清單，或是關注 1 間欣賞的設計館
+  private async addFavShop(shopId: string): Promise<void> {
+    const url = 'https://www.pinkoi.com/apiv2/shop/fav'
+    const body = { sid: shopId }
+    const headers = { cookie: this.cookie, referer }
+    log.debug('Adding fav shop: %s', shopId)
+    await axios.post(url, body, { headers: headers })
+    log.debug('Added fav shop: %s', shopId)
+  }
 
-    // Here we add an item into fav list.
+  private async removeFavShop(shopId: string): Promise<void> {
+    const url = 'https://www.pinkoi.com/apiv2/shop/unfav'
+    const body = { sid: shopId }
+    const headers = { cookie: this.cookie, referer }
+    log.debug('Removing fav shop: %s', shopId)
+    await axios.post(url, body, { headers: headers })
+    log.debug('Removed fav shop: %s', shopId)
+  }
+
+  private async solveAddFavShop(mission: WeeklyMission): Promise<void> {
+    // 關注 1 間設計館 👉 馬上看 <a href=#n-event-mission-game__recommend-title>你的專屬推薦</a>
+    // 點擊查看設計館頁，並完成 1 次關注。<br/>\n👉 任務頁面下方有「為你推薦的品牌及商品」，快去看看吧
 
     const missionKey = mission.mission_key
-    const tid = 'PAv3tZXu'
-    const body = { tid }
-    const headers = { cookie: this.cookie, referer }
-    let response: AxiosResponse<PinkoiResponse>
+    log.debug('Solving mission: %s', missionKey)
 
-    log.debug('Solve mission: ' + missionKey)
-
+    const shopId = 'ekax'
     try {
-      // Add an item to favor list.
-      log.debug(`${missionKey}: add favor: ${tid}`)
-      response = await axios.post<PinkoiResponse>(
-        'https://www.pinkoi.com/apiv2/item/fav',
-        body,
-        { headers }
-      )
-      validatePinkoiResponse(response)
-      log.debug(`${missionKey}: favor added: ${tid}`)
-
+      await this.addFavShop(shopId)
       await sleep()
-
-      // Remove an item from favor list
-      log.debug(`${missionKey}: remove favor: ${tid}`)
-      response = await axios.post<PinkoiResponse>(
-        'https://www.pinkoi.com/apiv2/item/unfav',
-        body,
-        { headers }
-      )
-      validatePinkoiResponse(response)
-      log.debug(`${missionKey}: favor removed: ${tid}`)
-
+      log.debug('Add fav shop: %s', shopId)
+      await this.removeFavShop(shopId)
       await sleep()
-
-      log.info(`Mission ${missionKey} solved.`)
     } catch (e: unknown) {
       handleMissionError(missionKey, e)
     }
+
+    log.info('Mission solved: %s', missionKey)
   }
 
-  private async solveAddToFavList(mission: WeeklyMission): Promise<void> {
-    // 使用 APP 將喜歡的商品加入收藏夾，分類不同用途的好設計
-    // Just visiting https://www.pinkoi.com/recommend/product/<random>?tab=similiar is OK
+  private async createFavList(favListName: string): Promise<string> {
+    log.debug('Creating new fav list: %s', favListName)
 
-    const missionKey = mission.mission_key
-    let url: string
-    let body: any
-    let response: AxiosResponse
-
-    const favListName = 'pinkoi-coins-bot' // the list name
-    const tid = '6k5tF2uK' // the product to be added to the list
+    const url = 'https://www.pinkoi.com/apiv3/favlist/add'
+    const body = { name: favListName, is_public: 0 }
     const headers = { cookie: this.cookie, referer }
 
-    log.debug('Solve mission: ' + missionKey)
+    // Note that the response is not wrapped (not PinkoiResponse<T>)
+    const res = await axios.post<FavList>(url, body, { headers })
+    const favListId = res.data.favlist_id
+
+    log.debug('Fav list created: %s, ID: %d', favListName, favListId)
+    return favListId
+  }
+
+  private async removeFavList(favListId: string): Promise<void> {
+    log.debug('Removing fav list: %s', favListId)
+
+    const url = 'https://www.pinkoi.com/apiv3/favlist/delete'
+    // cspell: ignore unfav
+    const body = { favlist_id: favListId, unfav_all: true }
+    const headers = { cookie: this.cookie, referer }
+    const res2 = await axios.post(url, body, { headers })
+    validatePinkoiResponse(res2)
+
+    log.debug('Fav list removed: %s', favListId)
+  }
+
+  private async addFavItem(itemId: string, favListId: string): Promise<void> {
+    log.debug('Adding fav item: %s', itemId)
+
+    const url = 'https://www.pinkoi.com/apiv3/item/fav'
+    const body = { favlist_id: favListId, tid: itemId }
+    const headers = { cookie: this.cookie, referer }
+    await axios.post<unknown>(url, body, { headers })
+
+    log.debug('Fav item added: %s', itemId)
+  }
+
+  private async solveAddFavItem(mission: WeeklyMission): Promise<void> {
+    // 點擊查看商品，並完成 3 次收藏 👉 馬上看 <a href=#n-event-mission-game__recommend-title>你的專屬推薦</a><br>任務進度：0 / 3
+    // 點擊查看商品，並完成 3 次收藏。<br/>\n👉 任務頁面下方有「為你推薦的品牌及商品」，快去看看吧！<br>任務進度：已達成 0 / 3
+
+    const missionKey = mission.mission_key
+    const favListName = 'pinkoi-coins-bot'
+    const itemIds = ['6k5tF2uK', 'zDzEKiTR', 'YRcUicek']  // cspell:disable-line
+
+    log.debug('Solving mission: %s', missionKey)
     try {
-      // Add a product to a new fav list
-      url = 'https://www.pinkoi.com/apiv3/favlist/add'
-      body = { name: favListName, is_public: 1, tid }
-      response = await axios.post<FavList>(url, body, { headers })
-      const favListId = response.data.favlist_id
-      validatePinkoiResponse(response)
-
-      // wait for a moment
+      const favListId = await this.createFavList(favListName)
       await sleep()
 
-      // Delete the list along with the product
-      url = 'https://www.pinkoi.com/apiv3/favlist/delete'
-      body = { favlist_id: favListId, unfav_all: true } // c-spell: ignore unfav
-      response = await axios.post(url, body, { headers })
-      validatePinkoiResponse(response)
+      for (const itemId of itemIds) {
+        await this.addFavItem(itemId, favListId)
+        await sleep()
+      }
 
-      // wait for a moment
+      await this.removeFavList(favListId)
       await sleep()
 
-      log.info(`Mission ${missionKey} solved.`)
+      log.info('Mission completed: %s;', missionKey)
     } catch (e: unknown) {
       handleMissionError(missionKey, e)
     }
@@ -297,10 +318,10 @@ export default class PinkoiBot {
         ? this.solveViewTopic(missionList[0])
         : alreadySolved(missionKeyNames[0]))
       await (missionStatus[1] === 0
-        ? this.solveAddToFavList(missionList[1])
+        ? this.solveAddFavShop(missionList[1])
         : alreadySolved(missionKeyNames[1]))
-      await (missionStatus[3] === 0
-        ? this.solveAddFavItemOrShop(missionList[3])
+      await (missionStatus[2] === 0
+        ? this.solveAddFavItem(missionList[3])
         : alreadySolved(missionKeyNames[3]))
 
       // Check if all five missions should have been solved.
