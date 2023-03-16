@@ -13,7 +13,7 @@ import {
 import Bot from './pinkoi-bot'
 import { setupLogging, validateArgs } from './util'
 
-const version = '1.3.0'
+const version = '1.4.0'
 const majorVersion = version.split('.')[0]
 
 program
